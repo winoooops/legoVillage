@@ -14,10 +14,10 @@ app.use(express.static(__dirname+'/public'))
 
 // routers
 const indexRoute = require('./controllers/index')
-
+const mazeRoute = require('./controllers/maze')
 
 app.use('/', indexRoute)
-
+app.use('/maze', mazeRoute)
 
 app.listen(PORT,() => {
     console.log("Barebone created...")
