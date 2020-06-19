@@ -9,6 +9,7 @@ export default {
     "green": 0x458248,
     "purple": 0x551A8B,
     "lightgreen": 0x629265,
-    "fog": 0xf7d9aa
-    
+    "fog": 0xf7d9aa,
+    "grey": 0x808080,
+    "aut": "#E67716", 
 }

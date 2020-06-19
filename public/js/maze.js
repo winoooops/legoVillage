@@ -1,3 +1,11 @@
+import Colors from '../assets/colors.js'
+import Tree from './mesh/tree-maze.js'
+import Flower from './mesh/flower-maze.js'
+import Sun from './mesh/sun.js'
+import Sky from './mesh/sky-maze.js'
+// import Forest from './mesh/forest.js'
+
+
 //define all the constants
 const dom_str = 'Threejs';
 const resize_str = 'resize';
@@ -34,7 +42,7 @@ var VIEW_ANGLE = 45,
     NEAR = 0.1,
     FAR = 20000;
     
-var container, scene, camera, renderer, controls;
+var container, scene, camera, renderer, controls, stats;
 var hemispshereLight, shadowLight;
 var planeMaterial;
 var material_floor;
@@ -49,22 +57,6 @@ var timesRun = 0;
 var tempSphere;
 var isAdded = false;
 
-var Colors = {
-    red: 0xf25346,
-    yellow: 0xedeb27,
-    white: 0xd8d0d1,
-    brown: 0x59332e,
-    pink: 0xF5986E,
-    brownDark: 0x23190f,
-    blue: 0x68c3c0,
-    green: 0x458248,
-    purple: 0x551A8B,
-    lightgreen: 0x629265,
-    aut: "#E67716",
-    flog: 0xf7d9aa,
-    grey: 0x808080
-};
-var petalColors = [Colors.red, Colors.yellow, Colors.blue];
 var resultArray = new Array();
 
 const clock = new THREE.Clock();//for Character Animation
@@ -123,12 +115,12 @@ function initScene() {
     // Create the scene.
     scene = new THREE.Scene();
     // Add FOV Fog effect to the scene. Same colour as the BG int he stylesheet.
-    scene.fog = new THREE.Fog(Colors.flog, 100, 950);
+    scene.fog = new THREE.Fog(Colors.fog, 100, 950);
 }
 
 function initLight() {
     // Gradient coloured light - Sky, Ground, Intensity
-    hemisphereLight = new THREE.HemisphereLight(0xf7d9aa, 0x000000, .9)
+    var hemisphereLight = new THREE.HemisphereLight(0xf7d9aa, 0x000000, .9)
     // Parallel rays
     shadowLight = new THREE.DirectionalLight(0xffffff, .9);
 
@@ -221,7 +213,7 @@ function initUnderground() {
 
 //draw lines
 function initLine() {
-    geometry = new THREE.Geometry();
+    var geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3(-length / 2, 0, 0));
     geometry.vertices.push(new THREE.Vector3(length / 2, 0, 0));
 
@@ -695,197 +687,16 @@ function rotateCloud() {
 }
 
 
-function createObjects() {
-    //create tree object
-    Tree = function () {
-        // Create an empty container for the tree
-        this.mesh = new THREE.Object3D();
 
-        //three tree levels of materials
-        this.mat1 = new THREE.MeshPhongMaterial({ color: Colors.green, flatShading: true });
-        this.mat2 = new THREE.MeshPhongMaterial({ color: Colors.green, flatShading: true });
-        this.mat3 = new THREE.MeshPhongMaterial({ color: Colors.green, flatShading: true });
-
-        // tree base: box geometry and material
-        var geonTreeBase = new THREE.BoxGeometry(2, 4, 3);
-        var matTreeBase = new THREE.MeshBasicMaterial({ color: Colors.brown });
-        var treeBase = new THREE.Mesh(geonTreeBase, matTreeBase);
-        treeBase.castShadow = true;
-        treeBase.receiveShadow = true;
-        this.mesh.add(treeBase);
-
-        // tree bottom level: cylinder geometry andd material
-        var geomTreeLeaves1 = new THREE.CylinderGeometry(1, 2 * 3, 2 * 3, 4);
-        var treeLeaves1 = new THREE.Mesh(geomTreeLeaves1, this.mat1);
-        treeLeaves1.castShadow = true;
-        treeLeaves1.receiveShadow = true;
-        treeLeaves1.position.y = 3
-        this.mesh.add(treeLeaves1);
-
-        // tree middle level: cylinder geometry andd material
-        var geomTreeLeaves2 = new THREE.CylinderGeometry(1, 1.5 * 3, 1.5 * 3, 4);
-        var treeLeaves2 = new THREE.Mesh(geomTreeLeaves2, this.mat2);
-        treeLeaves2.castShadow = true;
-        treeLeaves2.position.y = 7;
-        treeLeaves2.receiveShadow = true;
-        this.mesh.add(treeLeaves2);
-
-        //tree top level: cylinder geometry andd material
-        var geomTreeLeaves3 = new THREE.CylinderGeometry(1, 1.2 * 3, 1.2 * 3, 4);
-        var treeLeaves3 = new THREE.Mesh(geomTreeLeaves3, this.mat3);
-        treeLeaves3.castShadow = true;
-        treeLeaves3.position.y = 11;
-        treeLeaves3.receiveShadow = true;
-        this.mesh.add(treeLeaves3);
-    }
-
-    //create flower object
-    Flower = function () {
-        // Create an empty container for the flowers
-        this.mesh = new THREE.Object3D();
-
-        //flower stem box geometry and materials
-        var geomStem = new THREE.BoxGeometry(1, 10, 1, 1, 1, 1);
-        this.mat1 = new THREE.MeshPhongMaterial({ color: Colors.green, flatShading: true });
-        var stem = new THREE.Mesh(geomStem, this.mat1);
-        stem.castShadow = false;
-        stem.receiveShadow = true;
-        this.mesh.add(stem);
-
-        //flower petal core box geometry and material
-        var geomPetalCore = new THREE.BoxGeometry(5, 5, 5, 1, 1, 1);
-        this.mat2 = new THREE.MeshPhongMaterial({ color: Colors.yellow, flatShading: true });
-        petalCore = new THREE.Mesh(geomPetalCore, this.mat2);
-        petalCore.castShadow = false;
-        petalCore.receiveShadow = true;
-        //flower petal color: randomly choose three colors
-        var petalColor = petalColors[Math.floor(Math.random() * 3)];
-
-        //flower petal box geometry and material 
-        var geomPetal = new THREE.BoxGeometry(5, 7.5, 1, 1, 1, 1);
-        this.mat3 = new THREE.MeshBasicMaterial({ color: petalColor });
-        geomPetal.vertices[5].y -= 2;
-        geomPetal.vertices[4].y -= 2;
-        geomPetal.vertices[7].y += 2;
-        geomPetal.vertices[6].y += 2;
-        geomPetal.translate(5, 0, 3);
-
-        //4 petals make one flower
-        var petals = [];
-        for (var i = 0; i < 4; i++) {
-
-            petals[i] = new THREE.Mesh(geomPetal, this.mat3);
-            petals[i].rotation.z = i * Math.PI / 2;
-            petals[i].castShadow = true;
-            petals[i].receiveShadow = true;
-        }
-
-        //add petals to its core
-        petalCore.add(petals[0], petals[1], petals[2], petals[3]);
-        petalCore.position.y = 5;
-        petalCore.position.z = 3;
-
-        //add flowers to the current mesh
-        this.mesh.add(petalCore);
-    }
-
-    //create cloud object
-    Cloud = function () {
-        // Create an empty container for the cloud
-        this.mesh = new THREE.Object3D();
-        // Cube geometry and material
-        var geom = new THREE.DodecahedronGeometry(20, 0);
-        this.mat1 = new THREE.MeshPhongMaterial({
-            color: Colors.white,
-            flatShading: true
-        });
-
-        //each cloud combined with 3+random number of cubes
-        var nBlocs = 3 + Math.floor(Math.random() * 3);
-
-        for (var i = 0; i < nBlocs; i++) {
-            //Clone mesh geometry
-            var m = new THREE.Mesh(geom, this.mat1);
-            //Randomly position each cube
-            m.position.x = i * 7.5;
-            m.position.y = Math.random() * 5;
-            m.position.z = Math.random() * 5;
-            m.rotation.z = Math.random() * Math.PI * 2;
-            m.rotation.y = Math.random() * Math.PI * 2;
-
-            //Randomly scale the cubes
-            var s = .1 + Math.random() * .9;
-            m.scale.set(s, s, s);
-            //add each cloud into mesh
-            this.mesh.add(m);
-        }
-    }
-
-    //create sky object
-    Sky = function () {
-        // Create an empty container for the sky
-        this.mesh = new THREE.Object3D();
-
-        // Number of cloud groups
-        this.nClouds = 25;
-
-        // Space the consistenly
-        var stepAngle = Math.PI * 2 / this.nClouds;
-
-        // Create the Clouds
-        for (var i = 0; i < this.nClouds; i++) {
-
-            var c = new Cloud();
-
-            //set rotation and position using trigonometry
-            var a = stepAngle * i;
-            // this is the distance between the center of the axis and the cloud itself
-            var h = 300 + Math.random() * 200;
-            c.mesh.position.z = Math.sin(a) * h;
-            c.mesh.position.x = Math.cos(a) * h;
-
-            // rotate the cloud according to its position
-            c.mesh.rotation.y = a + Math.PI / 2;
-            // random depth for the clouds on the z-axis
-            c.mesh.position.y = 200 + Math.random() * 800;
-
-            // random scale for each cloud
-            var s = 1 + Math.random() * 2;
-            c.mesh.scale.set(s, s, s);
-
-            this.mesh.add(c.mesh);
-            Clouds.push(c)
-        }
-    }
-
-    //create sun object
-    Sun = function () {
-        //Create an empty container for the sun
-        this.mesh = new THREE.Object3D();
-
-        //create a sphere geometry
-        var sunGeom = new THREE.SphereGeometry(400, 20, 10);
-        //create a Material of the sun, with color: yellow and flatshading
-        var sunMat = new THREE.MeshPhongMaterial({
-            color: Colors.yellow,
-            flatShading: true,
-        });
-        //create a mesh of sun
-        var sun = new THREE.Mesh(sunGeom, sunMat);
-        sun.castShadow = false;
-        sun.receiveShadow = false;
-        this.mesh.add(sun);
-    }
-}
 
 function createSky() {
-    var sky = new Sky();
+    var sky = new Sky(Clouds);
     sky.mesh.position.y = offSet;
     scene.add(sky.mesh);
 }
 
 function createSun() {
-    sun = new Sun();
+    var sun = new Sun();
     sun.mesh.scale.set(1, 1, .3);
     sun.mesh.position.set(0, 30, 850);
     scene.add(sun.mesh);
@@ -900,7 +711,6 @@ function init(event){
     initGround();
     initFloor();
     initUnderground();
-    createObjects()
     createSky()
     createSun()
     initGrid(false);
