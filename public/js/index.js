@@ -1,3 +1,6 @@
+import Colors from '../assets/colors.js'
+console.log(Colors.red)
+
 //define all the constants
 const dom_str = 'Threejs';
 const resize_str = 'resize';
@@ -18,19 +21,19 @@ var mousePos = { x: 0, y: 0 };
 var offSet = -600;
 
 //define all the colors
-var Colors = {
-    red: 0xf25346,
-    yellow: 0xedeb27,
-    white: 0xd8d0d1,
-    brown: 0x59332e,
-    pink: 0xF5986E,
-    brownDark: 0x23190f,
-    blue: 0x68c3c0,
-    green: 0x458248,
-    purple: 0x551A8B,
-    lightgreen: 0x629265,
-    fog: 0xf7d9aa
-};
+// var Colors = {
+//     red: 0xf25346,
+//     yellow: 0xedeb27,
+//     white: 0xd8d0d1,
+//     brown: 0x59332e,
+//     pink: 0xF5986E,
+//     brownDark: 0x23190f,
+//     blue: 0x68c3c0,
+//     green: 0x458248,
+//     purple: 0x551A8B,
+//     lightgreen: 0x629265,
+//     fog: 0xf7d9aa
+// };
 //define petal colors
 var petalColors = [Colors.red, Colors.yellow, Colors.blue];
 
@@ -84,7 +87,7 @@ function handleWindowResize() {
 //create light
 function initLight() {
     // Gradient coloured light - Sky, Ground, Intensity
-    hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x000000, .9)
+    var hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x000000, .9)
     // Parallel rays
     shadowLight = new THREE.DirectionalLight(0xffffff, .9);
 
@@ -109,7 +112,7 @@ function initLight() {
 }
 
 //create land object
-Land = function () {
+var Land = function () {
     //create a cylinder geometry
     var geom = new THREE.CylinderGeometry(600, 600, 1700, 40, 10);
     //rotate on the x axis
@@ -127,14 +130,14 @@ Land = function () {
 }
 
 //create orbit object
-Orbit = function () {
+var Orbit = function () {
     //create a 3D Object
     var geom = new THREE.Object3D();
     this.mesh = geom;
 }
 
 //create sun object
-Sun = function () {
+var Sun = function () {
     //Create an empty container for the sun
     this.mesh = new THREE.Object3D();
 
@@ -156,7 +159,7 @@ Sun = function () {
 }
 
 //create cloud object
-Cloud = function () {
+var Cloud = function () {
     // Create an empty container for the cloud
     this.mesh = new THREE.Object3D();
     
@@ -189,7 +192,7 @@ Cloud = function () {
 }
 
 //create sky object
-Sky = function () {
+var Sky = function () {
     // Create an empty container for the sky
     this.mesh = new THREE.Object3D();
 
@@ -227,7 +230,7 @@ Sky = function () {
 }
 
 //create tree object
-Tree = function () {
+var Tree = function () {
     // Create an empty container for the tree
     this.mesh = new THREE.Object3D();
 
@@ -271,7 +274,7 @@ Tree = function () {
 }
 
 //create flower object
-Flower = function () {
+var Flower = function () {
     // Create an empty container for the flowers
     this.mesh = new THREE.Object3D();
 
@@ -292,7 +295,7 @@ Flower = function () {
         color: Colors.yellow, 
         flatShading: true 
     });
-    petalCore = new THREE.Mesh(geomPetalCore, matPetalCore);
+    var petalCore = new THREE.Mesh(geomPetalCore, matPetalCore);
     petalCore.castShadow = false;
     petalCore.receiveShadow = true;
 
@@ -328,7 +331,7 @@ Flower = function () {
 }
 
 //create forest object
-Forest = function () {
+var Forest = function () {
     // Create an empty container for the forests
     this.mesh = new THREE.Object3D();
 
