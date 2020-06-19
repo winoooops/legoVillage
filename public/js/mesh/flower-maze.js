@@ -1,4 +1,5 @@
-import Color from '../../assets/colors.js'
+import Colors from '../../assets/colors.js'
+const petalColors = [Colors.red, Colors.yellow, Colors.blue];
 export default function () {
     // Create an empty container for the flowers
     this.mesh = new THREE.Object3D();
@@ -14,7 +15,7 @@ export default function () {
     //flower petal core box geometry and material
     var geomPetalCore = new THREE.BoxGeometry(5, 5, 5, 1, 1, 1);
     this.mat2 = new THREE.MeshPhongMaterial({ color: Colors.yellow, flatShading: true });
-    petalCore = new THREE.Mesh(geomPetalCore, this.mat2);
+    var petalCore = new THREE.Mesh(geomPetalCore, this.mat2);
     petalCore.castShadow = false;
     petalCore.receiveShadow = true;
     //flower petal color: randomly choose three colors
