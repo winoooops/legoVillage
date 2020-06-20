@@ -321,9 +321,9 @@ function initGrid(bool) {
 
 function onKeyDownHandler(e) {
     // console.log(borders) 
-   
+    
     var char = scene.getObjectByName("character") 
-    console.log(char.position)
+    // console.log(isValidate(char))
     switch(e.keyCode) {
         case 87:
             console.log("w")
@@ -347,10 +347,10 @@ function onKeyDownHandler(e) {
 function moveUp(char) {
     char.rotation.y = 180
     // var currentPosition = char.position.z
-    if ( isValidate(char) ) {
+    if ( isValidate(char.position.x,char.position.z-1 ) ) {
         char.position.z -= 1
-    } else {
-        char.position.z = char.position.z+3
+    } else{
+        // char.position.z += 0.5
     }
     
 }
@@ -358,10 +358,10 @@ function moveUp(char) {
 function moveDown(char) {
     char.rotation.y = 0
     // var currentPosition = char.position.z
-    if( isValidate(char) ) {
+    if( isValidate(char.position.x, char.position.z+1) ) {
         char.position.z += 1
     } else {
-        char.position.z = char.position.z -3
+        // char.position.z -= 0.5
     }
    
 }
@@ -369,50 +369,44 @@ function moveDown(char) {
 function moveLeft(char) {
     char.rotation.y = -90
     // var currentPosition = char.position.x
-    if( isValidate(char) ) {
+    if( isValidate(char.position.x-1, char.position.z) ) {
         char.position.x -= 1
     } else {
-        char.position.x = char.position.x + 3
+        // char.position.x += 0.5
     }
 }
 
 function moveRight(char) {
     char.rotation.y = 90
     // var currentPosition = char.position.x
-    if( isValidate(char) ) {
+    if( isValidate(char.position.x+1, char.position.z) ) {
         char.position.x += 1
-    } else {
-        char.position.x = char.position.x - 3
+    } else{
+        // char.position.x -= 0.5
     }
             
 }
 
 
-function isValidate(char) {
+function isValidate(x1,z1) {
     // basically a strip-down collision detection using simple math
     // 1. tell if the character collides with the trees or flowers 
     var isBool = true
-    var x1 = char.position.x 
-    var y1 = char.position.y 
-    var z1 = char.position.z  
-
     Trees.forEach((tree) => {
         // console.log(tree.mesh.position) 
         var x2 = tree.mesh.position.x
-        var y2 = tree.mesh.position.y 
         var z2 = tree.mesh.position.z 
         // console.log( getDistance(x1,y1,z1,x2,y2,z2) ) 
-        if ( getDistance(x1,y1,z1,x2,y2,z2) < 15) { 
+        if ( getDistance(x1,z1,x2,z2) < 10) { 
             isBool = false  
         }
     })
 
     Flowers.forEach( (flower) => {
         var x2 = flower.mesh.position.x
-        var y2 = flower.mesh.position.y 
         var z2 = flower.mesh.position.z 
         // console.log( getDistance(x1,y1,z1,x2,y2,z2) ) 
-        if ( getDistance(x1,y1,z1,x2,y2,z2) < 10) { 
+        if ( getDistance(x1,z1,x2,z2) < 10) { 
             isBool = false  
         }
     })
@@ -424,18 +418,17 @@ function isValidate(char) {
         isBool = false
     }
 
-
-
+    
+    console.log(isBool)
     return isBool
     // return true 
 }
 
-function getDistance(x1, y1, z1, x2, y2, z2) {
+function getDistance(x1, z1, x2, z2) {
     let xDistance = x2 - x1 
-    let yDistance = y2 - y1 
     let zDistance = z2 - z1 
 
-    return Math.sqrt( Math.pow(xDistance,2) + Math.pow(yDistance, 2) + Math.pow(zDistance, 2) )
+    return Math.sqrt( Math.pow(xDistance,2) + Math.pow(zDistance, 2) )
 }
 
 
