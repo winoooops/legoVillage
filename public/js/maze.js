@@ -430,10 +430,31 @@ function pathAnimate() {
         requestAnimationFrame(pathAnimate);
         return;
     }
-    if (tempSphere.position.x > next.x) tempSphere.position.x -= 1;
-    if (tempSphere.position.x < next.x) tempSphere.position.x += 1;
-    if (tempSphere.position.z > next.z) tempSphere.position.z -= 1;
-    if (tempSphere.position.z < next.z) tempSphere.position.z += 1;
+    if (tempSphere.position.x > next.x)
+    {
+        tempSphere.position.x -= 1;
+        tempSphere.rotation.y = -90;
+    }
+
+
+    if (tempSphere.position.x < next.x)
+    {
+        tempSphere.position.x += 1;
+        tempSphere.rotation.y = 90;
+    }
+
+    if (tempSphere.position.z > next.z)
+    {
+        tempSphere.position.z -= 1;
+        tempSphere.rotation.y = Math.PI / 2;
+    }
+
+    if (tempSphere.position.z < next.z)
+    {
+        tempSphere.position.z += 1;
+        tempSphere.rotation.y = 0;
+    }
+    tempSphere.updateMatrix();
     requestAnimationFrame(pathAnimate);
 
 }
