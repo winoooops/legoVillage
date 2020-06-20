@@ -34,6 +34,7 @@ const absolute_str = 'absolute';
 const bottom_px_str = '0px';
 const load_str = 'load';
 
+
 //define all the global variables
 var SCREEN_WIDTH = window.innerWidth,
     SCREEN_HEIGHT = window.innerHeight;
@@ -56,8 +57,11 @@ var offSet = -600;
 var timesRun = 0;
 var tempSphere;
 var isAdded = false;
+var isClicked = false
+
 
 var resultArray = new Array();
+var borders = []
 
 const clock = new THREE.Clock();//for Character Animation
 var mixer, action;//for Character Animation
@@ -98,10 +102,10 @@ function initThree() {
 
 //responsive listener
 function handleWindowResize() {
-    HEIGHT = window.innerHeight;
-    WIDTH = window.innerWidth;
-    renderer.setSize(WIDTH, HEIGHT);
-    camera.aspect = WIDTH / HEIGHT;
+    // HEIGHT = window.innerHeight;
+    // WIDTH = window.innerWidth;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 }
 
@@ -161,17 +165,24 @@ function initGround() {
 
     var plane = new THREE.Mesh(geometry, planeMaterial);
     plane.position.set(0, 0, length / 2);
+    borders.push(plane)
     scene.add(plane);
+
     var plane = new THREE.Mesh(geometry, planeMaterial);
     plane.rotation.y = 90 * Math.PI / 180;
     plane.position.set(length / 2, 0, 0);
+    borders.push(plane)
     scene.add(plane);
+
     var plane = new THREE.Mesh(geometry, planeMaterial);
     plane.position.set(0, 0, -length / 2);
+    borders.push(plane)
     scene.add(plane);
+
     var plane = new THREE.Mesh(geometry, planeMaterial);
     plane.rotation.y = 90 * Math.PI / 180;
     plane.position.set(-length / 2, 0, 0);
+    borders.push(plane)
     scene.add(plane);
 }
 
@@ -272,6 +283,7 @@ function initGrid(bool) {
                 if (salt <= flex) { 
                     var tree = new Tree();
                     tree.mesh.position.set(10 * j - length / 2 + 5, 5, 10 * i - length / 2 + 5);
+                    // tree.
                     scene.add(tree.mesh);
                     Trees.push(tree);
                 }
@@ -307,6 +319,135 @@ function initGrid(bool) {
     }
 }
 
+function onKeyDownHandler(e) {
+    // console.log(borders) 
+   
+    var char = scene.getObjectByName("character") 
+    console.log(char.position)
+    switch(e.keyCode) {
+        case 87:
+            console.log("w")
+            moveUp(char)
+            break
+        case 83: 
+            console.log("s")
+            moveDown(char)
+            break
+        case 65: 
+            console.log("a")
+            moveLeft(char)
+            break
+        case 68:
+            console.log("d")
+            moveRight(char)
+            break
+    }
+}
+
+function moveUp(char) {
+    char.rotation.y = 180
+    // var currentPosition = char.position.z
+    if ( isValidate(char) ) {
+        char.position.z -= 1
+    } else {
+        char.position.z = char.position.z+3
+    }
+    
+}
+
+function moveDown(char) {
+    char.rotation.y = 0
+    // var currentPosition = char.position.z
+    if( isValidate(char) ) {
+        char.position.z += 1
+    } else {
+        char.position.z = char.position.z -3
+    }
+   
+}
+
+function moveLeft(char) {
+    char.rotation.y = -90
+    // var currentPosition = char.position.x
+    if( isValidate(char) ) {
+        char.position.x -= 1
+    } else {
+        char.position.x = char.position.x + 3
+    }
+}
+
+function moveRight(char) {
+    char.rotation.y = 90
+    // var currentPosition = char.position.x
+    if( isValidate(char) ) {
+        char.position.x += 1
+    } else {
+        char.position.x = char.position.x - 3
+    }
+            
+}
+
+
+function isValidate(char) {
+    // basically a strip-down collision detection using simple math
+    // 1. tell if the character collides with the trees or flowers 
+    var isBool = true
+    var x1 = char.position.x 
+    var y1 = char.position.y 
+    var z1 = char.position.z  
+
+    Trees.forEach((tree) => {
+        // console.log(tree.mesh.position) 
+        var x2 = tree.mesh.position.x
+        var y2 = tree.mesh.position.y 
+        var z2 = tree.mesh.position.z 
+        // console.log( getDistance(x1,y1,z1,x2,y2,z2) ) 
+        if ( getDistance(x1,y1,z1,x2,y2,z2) < 15) { 
+            isBool = false  
+        }
+    })
+
+    Flowers.forEach( (flower) => {
+        var x2 = flower.mesh.position.x
+        var y2 = flower.mesh.position.y 
+        var z2 = flower.mesh.position.z 
+        // console.log( getDistance(x1,y1,z1,x2,y2,z2) ) 
+        if ( getDistance(x1,y1,z1,x2,y2,z2) < 10) { 
+            isBool = false  
+        }
+    })
+    
+
+
+    // 2. tell if the character collides with the border
+    if(x1 > 92 || x1 <-92 || z1 >95 || z1 <-90) {
+        isBool = false
+    }
+
+
+
+    return isBool
+    // return true 
+}
+
+function getDistance(x1, y1, z1, x2, y2, z2) {
+    let xDistance = x2 - x1 
+    let yDistance = y2 - y1 
+    let zDistance = z2 - z1 
+
+    return Math.sqrt( Math.pow(xDistance,2) + Math.pow(yDistance, 2) + Math.pow(zDistance, 2) )
+}
+
+
+function clickHandler(e) {
+    if(!isClicked) {
+        pickupObjects(e)
+    } else {
+        return
+    }
+}
+
+
 
 function pickupObjects(e) {
     var raycaster = new THREE.Raycaster();
@@ -340,9 +481,11 @@ function pickupObjects(e) {
     }
 
     initCharacter(k, m);
+    isClicked = true
 }
 
-document.addEventListener(click_str, pickupObjects, false);
+document.addEventListener(click_str, clickHandler, false);
+document.addEventListener("keydown", onKeyDownHandler, false)
 var isCaculate = false;
 
 
@@ -375,7 +518,7 @@ function initCharacter(x, z) {
 
             action = mixer.clipAction(gltf.animations[1]);
             action.play();
-
+            object.name  = "character" 
             scene.add(object);
         } else if (resultArray[0].position.x != x && resultArray[0].position.z != z) {
             object = gltf.scene;
