@@ -17,7 +17,7 @@
     "nodemon": "^2.0.4",
     "path": "^0.12.7",
     "stats": "^1.0.0",
-    "three": "^0.117.1",
+    "three": "^0.125.0",
     "three-orbitcontrols": "^2.110.3"
   }
 }
